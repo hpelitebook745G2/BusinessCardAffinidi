@@ -21,7 +21,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'BusinessCard' do
+target 'BizLinkr' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -44,7 +44,7 @@ target 'BusinessCard' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'BusinessCardTests' do
+  target 'BizLinkrTests' do
     inherit! :complete
     # Pods for testing
   end
