@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.bizlinkr"
+    namespace "com.grantx.bizlinkr"
     defaultConfig {
-        applicationId "com.bizlinkr"
+        applicationId "com.grantx.bizlinkr"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

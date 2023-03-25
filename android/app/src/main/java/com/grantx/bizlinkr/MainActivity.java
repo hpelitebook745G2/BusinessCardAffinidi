@@ -1,4 +1,4 @@
-package com.bizlinkr;
+package com.grantx.bizlinkr;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

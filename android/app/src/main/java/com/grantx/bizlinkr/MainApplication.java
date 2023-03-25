@@ -1,4 +1,4 @@
-package com.bizlinkr;
+package com.grantx.bizlinkr;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
