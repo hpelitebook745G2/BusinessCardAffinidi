@@ -20,7 +20,6 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  ToastAndroid,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -158,81 +157,59 @@ const ListScreen: FC = ({navigation}: ListScreenProps) => {
             text="Add Business Card"
             style={styles.btnStart}
             onPress={() => {
-              if (isIOS) {
-                requestIOSPermission(
-                  () =>
-                    navigation.navigate(FORM, {
-                      isCreate: true,
-                    }),
-                  () => {
-                    dispatch(
-                      showModal({
-                        isVisible: true,
-                        modalOptions: {
-                          modalType: 'error',
-                          txtBtn: 'Got it!',
-                          buttonType: 'single',
-                          headerText: 'Permission denied',
-                          contentText:
-                            'Please enable permission in your phone settings',
-                          onPressBtn: () => {
-                            dispatch(dismissModal());
-                          },
-                        },
-                      }),
-                    );
-                  },
-                  () =>
-                    dispatch(
-                      showModal({
-                        isVisible: true,
-                        modalOptions: {
-                          modalType: 'error',
-                          txtBtn: 'Got it!',
-                          buttonType: 'single',
-                          headerText: 'Permission denied',
-                          contentText:
-                            'Please enable permission in your phone settings',
-                          onPressBtn: () => {
-                            dispatch(dismissModal());
-                          },
-                        },
-                      }),
-                    ),
-                );
-
-                return;
-              }
-
               const onPermGranted = () => {
-                ToastAndroid.show(
-                  'Permission granted (Android)!',
-                  ToastAndroid.SHORT,
-                );
                 navigation.navigate(FORM, {
                   isCreate: true,
                 });
               };
 
               const onPermDenied = () => {
-                ToastAndroid.show(
-                  'Permission denied (Android)!',
-                  ToastAndroid.SHORT,
+                dispatch(
+                  showModal({
+                    isVisible: true,
+                    modalOptions: {
+                      modalType: 'error',
+                      txtBtn: 'Got it!',
+                      buttonType: 'single',
+                      headerText: 'Permission denied',
+                      contentText:
+                        'Please enable permission in your phone settings',
+                      onPressBtn: () => {
+                        dispatch(dismissModal());
+                      },
+                    },
+                  }),
                 );
               };
 
-              const onPermError = (err: any) => {
-                ToastAndroid.show(
-                  `Permission error (Android)!: ${JSON.stringify(err)}`,
-                  ToastAndroid.SHORT,
+              const onPermError = () => {
+                dispatch(
+                  showModal({
+                    isVisible: true,
+                    modalOptions: {
+                      modalType: 'error',
+                      txtBtn: 'Got it!',
+                      buttonType: 'single',
+                      headerText: 'Permission error',
+                      contentText: 'Please try again',
+                      onPressBtn: () => {
+                        dispatch(dismissModal());
+                      },
+                    },
+                  }),
                 );
               };
 
-              requestAndroidPermission(
-                onPermGranted,
-                onPermDenied,
-                onPermError,
-              );
+              if (isIOS) {
+                requestIOSPermission(onPermGranted, onPermDenied, onPermError);
+                return;
+              } else {
+                requestAndroidPermission(
+                  onPermGranted,
+                  onPermDenied,
+                  onPermError,
+                );
+              }
             }}
           />
         </BottomComponent>
