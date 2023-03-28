@@ -1,4 +1,5 @@
 export type ContactsType = {
+  isPermissionGranted: boolean;
   selectedCard: BusinessCard;
   businessCards: BusinessCard[];
 };

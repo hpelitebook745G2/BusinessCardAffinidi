@@ -2,6 +2,7 @@ import {BusinessCard, ContactsType} from '@/models/ContactsModel';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export let initialState: ContactsType = {
+  isPermissionGranted: false,
   selectedCard: {
     recordID: '0',
     company: '',
@@ -31,6 +32,9 @@ const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
+    toggleIsPermissionGranted: state => {
+      state.isPermissionGranted = !state.isPermissionGranted;
+    },
     selectCard: (state, action: PayloadAction<BusinessCard>) => {
       state.selectedCard = action.payload;
     },
@@ -40,6 +44,7 @@ const contactsSlice = createSlice({
   },
 });
 
-export const {selectCard, setBusinessCards} = contactsSlice.actions;
+export const {toggleIsPermissionGranted, selectCard, setBusinessCards} =
+  contactsSlice.actions;
 
 export default contactsSlice.reducer;

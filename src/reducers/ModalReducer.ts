@@ -4,7 +4,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 export const modalInitialState: ModalInitialStateType = {
   isVisible: false,
   modalOptions: {
-    modalType: 'double' || 'single',
+    modalType: '',
     buttonType: '',
     headerText: '',
     contentText: '',

@@ -2,7 +2,11 @@ import {RootState} from '@/config/ReduxStore';
 import {Layout} from '@/config/theme';
 import {FORM, ITEM} from '@/constants/routes';
 import {BusinessCard, ContactsType} from '@/models/ContactsModel';
-import {selectCard, setBusinessCards} from '@/reducers/ContactsReducer';
+import {
+  selectCard,
+  setBusinessCards,
+  toggleIsPermissionGranted,
+} from '@/reducers/ContactsReducer';
 import {dismissModal, showModal} from '@/reducers/ModalReducer';
 import {isIOS, requestAndroidPermission, requestIOSPermission} from '@/utils';
 import {colors, images} from '@constants';
@@ -34,9 +38,10 @@ type ListScreenProps = {
 const ListScreen: FC = ({navigation}: ListScreenProps) => {
   const {fill, row, column, justifyContentBetween} = Layout();
   const dispatch = useDispatch();
-  const {businessCards} = useSelector<RootState, ContactsType>(
-    state => state.contacts,
-  );
+  const {isPermissionGranted, businessCards} = useSelector<
+    RootState,
+    ContactsType
+  >(state => state.contacts);
 
   const clearAllCards = () => {
     dispatch(
@@ -114,6 +119,57 @@ const ListScreen: FC = ({navigation}: ListScreenProps) => {
     );
   };
 
+  const requestPermission = () => {
+    const onPermGranted = () => {
+      navigation.navigate(FORM, {
+        isCreate: true,
+      });
+    };
+
+    const onPermDenied = () => {
+      dispatch(
+        showModal({
+          isVisible: true,
+          modalOptions: {
+            modalType: 'error',
+            txtBtn: 'Got it!',
+            buttonType: 'single',
+            headerText: 'Permission denied',
+            contentText: 'Please enable permission in your phone settings',
+            onPressBtn: () => {
+              dispatch(dismissModal());
+            },
+          },
+        }),
+      );
+    };
+
+    const onPermError = () => {
+      dispatch(
+        showModal({
+          isVisible: true,
+          modalOptions: {
+            modalType: 'error',
+            txtBtn: 'Got it!',
+            buttonType: 'single',
+            headerText: 'Permission error',
+            contentText: 'Please try again',
+            onPressBtn: () => {
+              dispatch(dismissModal());
+            },
+          },
+        }),
+      );
+    };
+
+    if (isIOS) {
+      requestIOSPermission(onPermGranted, onPermDenied, onPermError);
+      return;
+    } else {
+      requestAndroidPermission(onPermGranted, onPermDenied, onPermError);
+    }
+  };
+
   return (
     <View style={[fill, styles.container]}>
       <Header user="Earl" cardNumber={businessCards.length} />
@@ -157,58 +213,31 @@ const ListScreen: FC = ({navigation}: ListScreenProps) => {
             text="Add Business Card"
             style={styles.btnStart}
             onPress={() => {
-              const onPermGranted = () => {
-                navigation.navigate(FORM, {
-                  isCreate: true,
-                });
-              };
-
-              const onPermDenied = () => {
+              console.log('isPermissionGranted: ', isPermissionGranted);
+              if (!isPermissionGranted) {
                 dispatch(
                   showModal({
                     isVisible: true,
                     modalOptions: {
-                      modalType: 'error',
+                      modalType: 'confirm',
                       txtBtn: 'Got it!',
                       buttonType: 'single',
-                      headerText: 'Permission denied',
+                      headerText: 'Offline Contact Sync',
                       contentText:
-                        'Please enable permission in your phone settings',
+                        'To improve your experience, your phone contacts are synced offline and your data is not uploaded to any server and is only used locally.\n\nWe value your privacy and do NOT collect personal information.',
                       onPressBtn: () => {
                         dispatch(dismissModal());
+
+                        setTimeout(() => {
+                          dispatch(toggleIsPermissionGranted());
+                          requestPermission();
+                        }, 800);
                       },
                     },
                   }),
                 );
-              };
-
-              const onPermError = () => {
-                dispatch(
-                  showModal({
-                    isVisible: true,
-                    modalOptions: {
-                      modalType: 'error',
-                      txtBtn: 'Got it!',
-                      buttonType: 'single',
-                      headerText: 'Permission error',
-                      contentText: 'Please try again',
-                      onPressBtn: () => {
-                        dispatch(dismissModal());
-                      },
-                    },
-                  }),
-                );
-              };
-
-              if (isIOS) {
-                requestIOSPermission(onPermGranted, onPermDenied, onPermError);
-                return;
               } else {
-                requestAndroidPermission(
-                  onPermGranted,
-                  onPermDenied,
-                  onPermError,
-                );
+                requestPermission();
               }
             }}
           />
