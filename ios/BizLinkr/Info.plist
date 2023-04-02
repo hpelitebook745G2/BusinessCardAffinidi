@@ -50,7 +50,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSContactsUsageDescription</key>
-	<string>This is to export added user details to the phone contacts</string>
+	<string>BizLinkr needs to access your contacts to sync with your phone contacts. Your contacts will only be used for this purpose and will NOT be uploaded to any server.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
